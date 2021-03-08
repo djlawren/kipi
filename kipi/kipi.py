@@ -1,24 +1,35 @@
 
-from flask import Blueprint, request
+import subprocess
+import argparse
+import time
+from multiprocessing import Process
 
-from . import mine
+import pika
 
-bp = Blueprint('kipi', __name__, url_prefix='/kipi')
+import rest
+from mine import MinecraftServer
 
-@bp.route('/kill', methods=('POST',))
-def kill():
-    if request.method == 'POST':
-        mine.MinecraftProcess.kill_server()
-    return 
+def queue_callback(ch, method, properties, body):
+    if body == 'start':
+        MinecraftServer.start_server()
+    elif body == 'kill':
+        MinecraftServer.kill_server()
+    elif body == 'restart':
+        MinecraftServer.restart_server()
 
-@bp.route('/start', methods=('POST',))
-def start():
-    if request.method == 'POST':
-        mine.MinecraftProcess.start_server()
-    return
+def main():
 
-@bp.route('/restart', methods=('POST',))
-def restart():
-    if request.method == 'POST':
-        mine.MinecraftProcess.restart_server()
-    return
+    MinecraftServer.start_server()
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+    channel = queue_declare(queue='kipi')
+
+    channel.basic_consume(queue='kipi', auto_ack=True, on_message_callback=queue_callback)
+
+    subprocess.run(args=["gunicorn", "-w", 1, "kipi.rest:create_app"])
+
+    while True:
+        time.sleep(1)
+
+if __name__ == "__main__":
+    main()

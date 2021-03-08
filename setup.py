@@ -10,7 +10,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         "flask",
-        "gunicorn"
+        "gunicorn",
+        "pika"
     ],
-    entry_points=[]
+    entry_points=["kipi-start=kipi:main"]
 )
