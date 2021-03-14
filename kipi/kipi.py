@@ -22,7 +22,8 @@ def main():
     MinecraftServer.start_server()
 
     connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
-    channel = queue_declare(queue='kipi')
+    channel = connection.channel()
+    channel.queue_declare(queue='kipi')
 
     channel.basic_consume(queue='kipi', auto_ack=True, on_message_callback=queue_callback)
 

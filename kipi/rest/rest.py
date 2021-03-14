@@ -18,7 +18,7 @@ def kill():
 
         channel.basic_publish(exchange='', routing_key='kipi', body='kill')
 
-        return 'all good!', 200
+        return 'all good!', 201
 
     return 'bad request!', 400
 
@@ -34,7 +34,7 @@ def start():
 
         channel.basic_publish(exchange='', routing_key='kipi', body='start')
 
-        return 'all good!', 200
+        return 'all good!', 201
 
     return 'bad request!', 400
 
@@ -50,6 +50,6 @@ def restart():
 
         channel.basic_publish(exchange='', routing_key='kipi', body='restart')
 
-        return 'all good!', 200
+        return 'all good!', 201
 
     return 'bad request!', 400

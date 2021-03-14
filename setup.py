@@ -13,5 +13,9 @@ setup(
         "gunicorn",
         "pika"
     ],
-    entry_points=["kipi-start=kipi:main"]
+    entry_points={
+        "console_scripts": [
+            "kipi-start = kipi:main"
+        ]
+    }
 )
